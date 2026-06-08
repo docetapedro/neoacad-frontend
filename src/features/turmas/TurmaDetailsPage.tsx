@@ -200,14 +200,14 @@ export function TurmaDetailsPage() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <Card className="lg:col-span-2">
+        <Card>
           <CardHeader>
             <CardTitle className="text-sm flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
               Identificação
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          <CardContent className="space-y-3 text-sm">
             <InfoLine icon={GraduationCap} label="Curso">
               {turma.curso ? (
                 <span className="flex items-center gap-2">
@@ -232,17 +232,11 @@ export function TurmaDetailsPage() {
               <span className="font-mono">{turma.ano_academico?.ano ?? '—'}</span>
             </InfoLine>
             {turma.formula_media_final && (
-              <InfoLine icon={HelpCircle} label="Fórmula da média final">
+              <InfoLine icon={HelpCircle} label="Fórmula">
                 <code className="text-xs bg-muted px-2 py-0.5 rounded">
                   {turma.formula_media_final}
                 </code>
               </InfoLine>
-            )}
-            {turma.descricao && (
-              <div className="sm:col-span-2">
-                <p className="text-xs text-muted-foreground mb-1">Descrição</p>
-                <p>{turma.descricao}</p>
-              </div>
             )}
           </CardContent>
         </Card>
@@ -286,6 +280,10 @@ export function TurmaDetailsPage() {
             />
           </CardContent>
         </Card>
+
+        <div className="lg:col-span-1">
+          <DocentesSection turmaId={turma.id} docentes={turma.docentes ?? []} />
+        </div>
       </div>
 
       <Card>
@@ -349,10 +347,6 @@ export function TurmaDetailsPage() {
         </CardContent>
       </Card>
 
-      <div className="mt-6">
-        <DocentesSection turmaId={turma.id} docentes={turma.docentes ?? []} />
-      </div>
-
       <PautaDialog
         open={pautaOpen}
         onOpenChange={setPautaOpen}
@@ -411,9 +405,14 @@ function DocentesSection({
               <Badge variant="outline" className="ml-2">{docentes.length}</Badge>
             </CardTitle>
             {podeGerirDocentes && (
-              <Button size="sm" variant="outline" onClick={() => setPickerOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Associar docente
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-7 w-7"
+                onClick={() => setPickerOpen(true)}
+                title="Associar docente"
+              >
+                <Plus className="h-4 w-4" />
               </Button>
             )}
           </div>
@@ -421,40 +420,32 @@ function DocentesSection({
         <CardContent>
           {docentes.length === 0 ? (
             <div className="text-center text-sm text-muted-foreground py-8">
-              Sem docentes associados a esta turma.
+              Sem docentes associados.
             </div>
           ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead className="w-12 text-right"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {docentes.map((d) => (
-                    <TableRow key={d.id}>
-                      <TableCell className="font-medium">{d.name ?? '—'}</TableCell>
-                      <TableCell className="text-muted-foreground">{d.email ?? '—'}</TableCell>
-                      <TableCell className="text-right">
-                        {podeGerirDocentes ? (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive hover:text-destructive"
-                            onClick={() => setConfirmRemove(d)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        ) : null}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <ul className="divide-y rounded-md border">
+              {docentes.map((d) => (
+                <li
+                  key={d.id}
+                  className="flex items-center justify-between gap-2 px-3 py-2 text-sm"
+                >
+                  <span className="font-medium truncate" title={d.name ?? undefined}>
+                    {d.name ?? '—'}
+                  </span>
+                  {podeGerirDocentes && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0 text-destructive hover:text-destructive"
+                      onClick={() => setConfirmRemove(d)}
+                      title="Remover docente"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                </li>
+              ))}
+            </ul>
           )}
         </CardContent>
       </Card>

@@ -159,6 +159,30 @@ export function useTiposAvaliacoesLookup(anoAcademicoId?: number | null, enabled
   })
 }
 
+export type TurmaLookup = {
+  id: number
+  label: string
+}
+
+/**
+ * Lista turmas filtradas por CTAA (curso_turno_ano_academico_id). Se `ctaaId`
+ * é null, devolve todas (mas a query fica disabled até haver um valor).
+ */
+export function useTurmasPorCtaaLookup(
+  ctaaId: number | null | undefined,
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: ['lookup', 'turmas', ctaaId],
+    queryFn: () =>
+      fetchLookup<TurmaLookup>('/lookup/turmas', {
+        ctaa_id: ctaaId ?? undefined,
+      }),
+    enabled: enabled && !!ctaaId,
+    staleTime: 60 * 1000,
+  })
+}
+
 export type InscricaoTurmaLookup = {
   id: number
   label: string

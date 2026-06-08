@@ -5,11 +5,8 @@ import type { User } from '@/types/auth'
 const ROLES_PRIVILEGIADAS = [
   'administrador',
   'superadministrador',
-  'coordernador', // sic — typo do RoleSeeder backend
   'coordenador',
   'secretaria',
-  'diretor academico',
-  'diretor_academico',
 ]
 
 type AuthState = {
